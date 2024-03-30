@@ -33,7 +33,8 @@
           "cameraPermission": "Allow App to access your camera.",
           "recordAudioAndroid": true
         }
-      ]
+      ],
+      "react-native-compressor"
     ]
   }
 }

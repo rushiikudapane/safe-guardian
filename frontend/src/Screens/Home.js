@@ -1,16 +1,26 @@
 import React, { useEffect, useState, useRef } from "react";
 import { StatusBar } from "expo-status-bar";
-import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import * as Location from "expo-location";
 import { Alert } from "react-native";
 import * as Notification from "expo-notifications";
 import { Audio } from "expo-av";
 import { Camera, CameraType } from "expo-camera";
+import axios from "axios";
+import * as FileSystem from "expo-file-system";
+import LZString from "lz-string";
 
 const Home = () => {
   const [speed, setSpeed] = useState(0);
   const [statusBarMessage, setStatusBarMessage] = useState("");
-  const cameraRef = useRef(null);
+  // const cameraRef = useRef(null);
+  const [camera, setCamera] = useState(null);
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
 
   useEffect(() => {
@@ -48,22 +58,51 @@ const Home = () => {
   };
 
   const capturePhoto = async () => {
-    console.log("permisiion status from capturePhoto: ", hasCameraPermission);
-    // console.log("camera reference: ", cameraRef.current);
-    // setTimeout(async () => {
-    if (cameraRef.current != null) {
-      try {
-        // setTimeout(async () => {
-        let photo = await cameraRef.current.takePictureAsync(null);
-        console.log("Captured photo object: ", photo.uri);
-        // }, 5000);
-      } catch (err) {
-        console.log("Error while capturign the photo: ", err.message);
+    console.log(
+      "permisiion status from capturePhoto method: ",
+      hasCameraPermission
+    );
+
+    setInterval(async () => {
+      if (camera) {
+        try {
+          const data = await camera.takePictureAsync();
+          // console.log("Captured photo object: ", data.base64);
+          // const serverUrl = "http://localhost:5003/api/sendImage/detect";
+
+          // console.log("Image object: ", data);
+          const fileUri = data.uri;
+          const fileInfo = await FileSystem.getInfoAsync(fileUri);
+
+          // console.log("fileInfo: ", fileInfo);
+          if (!fileInfo.exists) {
+            throw new Error("File does not exist.");
+          }
+
+          const formData = new FormData();
+          formData.append("image", {
+            uri: fileUri,
+            name: "image.jpg",
+            type: "image/jpeg",
+          });
+
+          axios
+            .post("http://192.168.0.6:5003/api/sendImage/detect", formData, {
+              headers: { "Content-Type": "multipart/form-data" },
+            })
+            .then((response) => {
+              console.log("Server response:", response.data);
+            })
+            .catch((error) => {
+              console.error("Error while sending base64 data:", error.message);
+            });
+        } catch (err) {
+          console.log("Error while capturign the photo: ", err.message);
+        }
+      } else {
+        console.log("Camera ref is null");
       }
-    } else {
-      console.log("Camera ref is null");
-    }
-    // }, 5000);
+    }, 5000);
   };
 
   // function to fetch current speed from location object
@@ -125,23 +164,26 @@ const Home = () => {
   return (
     <ScrollView>
       <View className="bg-blue-100 flex flex-col items-center h-full mb-10">
-        {hasCameraPermission ? (
-          <Camera
-            style={{ flex: 1 }}
-            type={CameraType.front}
-            autoFocus={Camera.Constants.AutoFocus.off}
-            ref={cameraRef}
-            onCameraReady={() => {
-              console.log("Camera is ready");
-              capturePhoto();
-            }}
-            onMountError={() => {
-              console.log("error while loading camera");
-            }}
-          />
-        ) : (
-          <Text>No camera permission granted.</Text>
-        )}
+        <View style={styles.cameraContainer}>
+          {hasCameraPermission ? (
+            <Camera
+              type={CameraType.front}
+              autoFocus={Camera.Constants.AutoFocus.off}
+              ref={(ref) => setCamera(ref)}
+              style={styles.fixedRatio}
+              onCameraReady={() => {
+                console.log("Camera is ready");
+                capturePhoto();
+              }}
+              ratio={"1:1"}
+              onMountError={() => {
+                console.log("error while loading camera");
+              }}
+            />
+          ) : (
+            <Text>No camera permission granted.</Text>
+          )}
+        </View>
         <StatusBar style="auto" />
         {statusBarMessage ? (
           <View className="h-10 w-full bg-red-700 shadow-xl border-b-2 border-red-900 shadow-black flex justify-center">
@@ -200,11 +242,11 @@ const Home = () => {
             </View>
           </View>
         </View>
-        <Image
+        {/* <Image
           source={require("../../assets/safe-drive logo.jpeg")}
           className="h-36 w-96 rounded-full mt-2"
-        />
-        {/* 
+        /> */}
+        {/*         
       <View style={styles.contentContainer}>
         <Text style={styles.title}>Safe-Drive Guardian</Text>
         <Text style={styles.subtitle}>Stay Alert, Stay Safe</Text>
@@ -224,5 +266,16 @@ const Home = () => {
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  cameraContainer: {
+    flex: 1,
+    flexDirection: "row",
+  },
+  fixedRatio: {
+    flex: 1,
+    aspectRatio: 1,
+  },
+});
 
 export default Home;

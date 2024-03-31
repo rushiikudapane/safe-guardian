@@ -16,12 +16,26 @@ import axios from "axios";
 import * as FileSystem from "expo-file-system";
 import LZString from "lz-string";
 
+import { useFonts } from "expo-font";
+import { JosefinSans_400Regular, JosefinSans_500Medium, JosefinSans_700Bold } from "@expo-google-fonts/josefin-sans";
+import AppLoading from "expo-app-loading";
+
 const Home = () => {
   const [speed, setSpeed] = useState(0);
   const [statusBarMessage, setStatusBarMessage] = useState("");
   // const cameraRef = useRef(null);
   const [camera, setCamera] = useState(null);
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
+
+  let [fontsLoaded] = useFonts({
+    JosefinSans_400Regular,
+    JosefinSans_500Medium,
+    JosefinSans_700Bold,
+  });
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
 
   useEffect(() => {
     getLocationPermission();
@@ -59,7 +73,7 @@ const Home = () => {
 
   const capturePhoto = async () => {
     console.log(
-      "permisiion status from capturePhoto method: ",
+      "permision status from capturePhoto method: ",
       hasCameraPermission
     );
 
@@ -87,7 +101,7 @@ const Home = () => {
           });
 
           axios
-            .post("http://192.168.0.6:5003/api/sendImage/detect", formData, {
+            .post("http://192.168.0.110:5003/api/sendImage/detect", formData, {
               headers: { "Content-Type": "multipart/form-data" },
             })
             .then((response) => {
@@ -163,6 +177,7 @@ const Home = () => {
 
   return (
     <ScrollView>
+      
       <View className="bg-blue-100 flex flex-col items-center h-full mb-10">
         <View style={styles.cameraContainer}>
           {hasCameraPermission ? (
@@ -194,12 +209,12 @@ const Home = () => {
         ) : null}
 
         <View className="w-full">
-          <View className="px-6 py-4">
-            <Text className="font-thin text-4xl text-cyan-900 rounded-t-3xl">
-              Hello, User
+          <View className="my-10 px-6 py-12">
+            <Text style={styles.title} className="font-thin text-4xl text-cyan-900 rounded-t-3xl ">
+              Hello,{'\n'}User
             </Text>
-            <Text className="font-thin text-sm text-cyan-900 rounded-t-3xl">
-              Stay Alert, Stay Safe
+            <Text className="font-thin text-sm text-cyan-900 rounded-t-3xl font-serif">
+            {'\n'} Stay Alert, Stay Safe
             </Text>
           </View>
           <View className="flex flex-row w-full items-start text-start px-3 my-3 justify-evenly">
@@ -233,6 +248,7 @@ const Home = () => {
               <Text className="text-6xl">3</Text>
               <Text className="text-lg">Call Blocks Count</Text>
             </View>
+            
             <View className="w-2/4 h-32 rounded-xl shadow-xl shadow-black justify-center px-5 bg-blue-200">
               <Text className="text-6xl text-gray-700">-</Text>
               <Text className="text-lg text-gray-700">Reward Points</Text>
@@ -242,26 +258,6 @@ const Home = () => {
             </View>
           </View>
         </View>
-        {/* <Image
-          source={require("../../assets/safe-drive logo.jpeg")}
-          className="h-36 w-96 rounded-full mt-2"
-        /> */}
-        {/*         
-      <View style={styles.contentContainer}>
-        <Text style={styles.title}>Safe-Drive Guardian</Text>
-        <Text style={styles.subtitle}>Stay Alert, Stay Safe</Text>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => console.log("Start Detection pressed")}
-        >
-          <Text style={styles.buttonText}>Start Detection</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>Version 1.0.0</Text>
-      </View> */}
       </View>
     </ScrollView>
   );
@@ -269,13 +265,25 @@ const Home = () => {
 
 const styles = StyleSheet.create({
   cameraContainer: {
-    flex: 1,
+    flex:2,
+    zIndex: 2,
     flexDirection: "row",
+    position:'absolute',
+    top:50,
+    left:90,
+    marginHorizontal:120
+    // right:20,
   },
   fixedRatio: {
-    flex: 1,
+    flex: 2,
+    zIndex: 3,
     aspectRatio: 1,
   },
+  title:{
+    // fontSize:30,
+    fontFamily:"JosefinSans_700Bold"
+  },
+  
 });
 
 export default Home;

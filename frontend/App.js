@@ -17,6 +17,7 @@ import LandingPage from './src/Screens/LandingPage/LandingPage';
 import Login from './src/Screens/LandingPage/logIn2';
 import SignUp from './src/Screens/LandingPage/signUp2';
 import Menu from "../frontend/src/Components/Menu";
+import { HeaderShownContext } from '@react-navigation/elements';
 
 const Stack = createStackNavigator();
 
@@ -24,10 +25,10 @@ const App = () => {
   return (
     <NavigationContainer independent={true}>
       <Stack.Navigator initialRouteName="LandingPage">
-        <Stack.Screen name="LandingPage" component={LandingPage} />
+        <Stack.Screen name="LandingPage" component={LandingPage} options={{ headerShown: false }}/>
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="SignUp" component={SignUp} />
-        <Stack.Screen name="Menu" component={Menu} />        
+        <Stack.Screen name="Menu" component={Menu} options={{ headerShown: false }} />        
       </Stack.Navigator>
     </NavigationContainer>
   );

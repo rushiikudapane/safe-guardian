@@ -1,6 +1,6 @@
 // SignUp.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 
 const SignUp = ({ navigation }) => {
   const [firstName, setFirstName] = useState('');
@@ -17,6 +17,7 @@ const SignUp = ({ navigation }) => {
 
   const navigateToLogin = () => {
     navigation.navigate('Login'); 
+    Alert.alert('Account created successfully')
   };
 
   return (
@@ -120,4 +121,3 @@ const styles = StyleSheet.create({
 });
 
 export default SignUp;
-

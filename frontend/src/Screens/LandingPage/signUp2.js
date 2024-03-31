@@ -1,22 +1,54 @@
 // SignUp.js
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
+import RadioGroup from "react-native-radio-buttons-group";
+import axios from "axios";
 
 const SignUp = ({ navigation }) => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [fullName, setFirstName] = useState("");
+  const [gender, setGender] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleSignUp = () => {
-    // Add your signup logic here
-    console.log(`Signing up with data: ${firstName}, ${lastName}, ${email}, ${phoneNumber}, ${username}, ${password}`);
+  const handleSignUp = async () => {
+    console.log(
+      `Signing up with data: ${fullName}, ${gender}, ${email}, ${phoneNumber}, ${username}, ${password}`
+    );
+
+    try {
+      await axios
+        .post("http://192.168.0.7:5003/api/user/register", {
+          fullName,
+          gender,
+          email,
+          phoneNumber,
+          username,
+          password,
+        })
+        .then((response) => {
+          console.log("Server response: ", response.data);
+          setTimeout(() => {
+            navigateToLogin();
+          }, 2000);
+        })
+        .catch((error) => {
+          console.error("Error while sending signup request: ", error.message);
+        });
+    } catch (err) {
+      console.log("Error while sending signup request: ", err.message);
+    }
   };
 
   const navigateToLogin = () => {
-    navigation.navigate('Login'); 
+    navigation.navigate("Login");
   };
 
   return (
@@ -25,16 +57,9 @@ const SignUp = ({ navigation }) => {
 
       <TextInput
         style={styles.input}
-        placeholder="First Name"
-        value={firstName}
+        placeholder="Full Name"
+        value={fullName}
         onChangeText={(text) => setFirstName(text)}
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Last Name"
-        value={lastName}
-        onChangeText={(text) => setLastName(text)}
       />
 
       <TextInput
@@ -43,6 +68,13 @@ const SignUp = ({ navigation }) => {
         value={email}
         onChangeText={(text) => setEmail(text)}
         keyboardType="email-address"
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Gender"
+        value={gender}
+        onChangeText={(text) => setGender(text)}
       />
 
       <TextInput
@@ -68,7 +100,7 @@ const SignUp = ({ navigation }) => {
         onChangeText={(text) => setPassword(text)}
       />
 
-      <TouchableOpacity style={styles.button} onPress={navigateToLogin}>
+      <TouchableOpacity style={styles.button} onPress={handleSignUp}>
         <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
 
@@ -82,42 +114,41 @@ const SignUp = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 16,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 16,
   },
   input: {
-    width: '100%',
+    width: "100%",
     height: 40,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderWidth: 1,
     marginBottom: 12,
     paddingLeft: 8,
     borderRadius: 8,
   },
   button: {
-    backgroundColor: '#3498db',
+    backgroundColor: "#3498db",
     padding: 15,
     borderRadius: 15,
-    width: '100%',
+    width: "100%",
     marginBottom: 12,
   },
   buttonText: {
-    color: '#fff',
-    textAlign: 'center',
+    color: "#fff",
+    textAlign: "center",
     fontSize: 16,
   },
   linkText: {
-    color: '#3498db',
+    color: "#3498db",
     fontSize: 14,
     marginTop: 12,
   },
 });
 
 export default SignUp;
-

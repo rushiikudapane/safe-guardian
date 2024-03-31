@@ -4,7 +4,10 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Octicons } from "@expo/vector-icons";
 
-const MyProfile = () => {
+const MyProfile = ({ route }) => {
+  const user = route.params.userData;
+  console.log("Data from home component: ", route.params.userData);
+
   return (
     <ScrollView>
       <View className="flex flex-col bg-blue-50 w-full h-full">
@@ -17,10 +20,10 @@ const MyProfile = () => {
           </View>
           <View className="py-2 px-2 justify-center items-start">
             <Text className="text-3xl text-emerald-900 font-bold">
-              Rushiraj
+              {user.fullName}
             </Text>
-            <Text className="text-3xl text-emerald-900 font-bold">
-              Kudapane
+            <Text className="text-sm text-emerald-900 font-bold">
+              {user.username}
             </Text>
             <Text className="text-lg text-gray-700">Resposible Driver</Text>
           </View>
@@ -40,7 +43,7 @@ const MyProfile = () => {
                 color="rgba(0,40,53,0.95)"
               />
               <Text className="text-center mt-1 text-xl text-cyan-900">
-                100 km/hr
+                40 km/hr
               </Text>
               <Text className="text-center mt-1 text-gray-700">
                 Overall Avg. Speed

@@ -1,116 +1,14 @@
-//landing page
-// import React, { useEffect, useRef } from 'react';
-// import { View, Text, TouchableOpacity, Image, StyleSheet, Animated } from 'react-native';
-// import { useFonts } from "expo-font";
-// import { JosefinSans_400Regular, JosefinSans_500Medium, JosefinSans_700Bold } from "@expo-google-fonts/josefin-sans";
-// import AppLoading from "expo-app-loading";
 
-// const LandingPage = ({ navigation }) => {
-  // const fadeAnim = useRef(new Animated.Value(0)).current;
-  // const slideInAnim = useRef(new Animated.Value(-100)).current;
-
-  // useEffect(() => {
-  //   // Fade in animation for the title
-  //   Animated.timing(fadeAnim, {
-  //     toValue: 1,
-  //     duration: 1000,
-  //     useNativeDriver: true,
-  //   }).start();
-
-  //   // Slide in animation for the description
-  //   Animated.timing(slideInAnim, {
-  //     toValue: 0,
-  //     duration: 1000,
-  //     useNativeDriver: true,
-  //   }).start();
-  // }, [fadeAnim, slideInAnim]);
-
-  // let [fontsLoaded] = useFonts({
-  //   JosefinSans_400Regular,
-  //   JosefinSans_500Medium,
-  //   JosefinSans_700Bold,
-  // });
-
-  // if (!fontsLoaded) {
-  //   return <AppLoading />;
-  // }
-
-//   const handleGetStarted = () => {
-//     navigation.navigate('Login');
-//   };
-
-//   const imageSource = require('../../../assets/landing-image.jpg');
-
-//   return (
-//     <View style={styles.container}>
-//       <Image source={imageSource} style={styles.image} />
-
-//       <Animated.Text style={[styles.title,  { transform: [{ translateY: slideInAnim }] }]}>Welcome to Safe-Drive Guardian</Animated.Text>
-//       <Animated.Text style={[styles.description, { transform: [{ translateY: slideInAnim }] }]}>Stay Safe on the road!</Animated.Text>
-
-//       <TouchableOpacity style={[styles.getStartedButton, styles.button]} onPress={handleGetStarted}>
-//         <Text style={[styles.buttonText, styles.largeButtonText]}>Get Started</Text>
-//       </TouchableOpacity>
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     padding: 16,
-//   },
-//   image: {
-//     width: '100%',
-//     height: 300,
-//     resizeMode: 'cover',
-//     borderRadius: 15,
-//     marginBottom: 16,
-//     marginTop: '5%',
-//   },
-//   title: {
-//     fontSize: 24,
-//     marginBottom: 16,
-//     marginTop: '5%',
-//     fontFamily: "JosefinSans_700Bold",
-//   },
-//   description: {
-//     fontSize: 16,
-//     textAlign: 'center',
-//     marginBottom: 24,
-//     fontFamily: "JosefinSans_400Regular",
-//   },
-//   button: {
-//     backgroundColor: '#3498db',
-//     borderRadius: 15,
-//     marginBottom: 12,
-//     width: '100%',
-//     padding: 16,
-//   },
-//   buttonText: {
-//     color: '#fff',
-//     textAlign: 'center',
-//     fontSize: 16,
-//     fontFamily: "JosefinSans_700Bold",
-//   },
-//   largeButtonText: {
-//     fontSize: 20,
-//   },
-// });
-
-// export default LandingPage;
 
 import React, { useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, Image,SafeAreaView, StyleSheet, Animated } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert,Image ,Animated,SafeAreaView} from 'react-native';
 import { useFonts } from "expo-font";
 import { JosefinSans_400Regular, JosefinSans_500Medium, JosefinSans_700Bold } from "@expo-google-fonts/josefin-sans";
 import AppLoading from "expo-app-loading";
 
 export default function Example({ navigation }) {
 
-    const fadeAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideInAnim = useRef(new Animated.Value(-100)).current;
 
   useEffect(() => {
@@ -139,7 +37,7 @@ export default function Example({ navigation }) {
     return <AppLoading />;
   }
 
-  const imageSource = require('../../../assets/landing-image.jpg');
+  const imageSource = require('../../../assets/landing-image2.png');
 
   const handleGetStarted = () => {
         navigation.navigate('Login');
@@ -207,12 +105,12 @@ const styles = StyleSheet.create({
   hero: {
     backgroundColor: '#BFDCEE',
     margin: 12,
-    borderRadius: 16,
+    borderRadius: 200,
     padding: 16,
   },
   heroImage: {
-    width: '100%',
-    height: 400,
+    width: 400,
+    height: 350,
   },
   /** Content */
   content: {
@@ -253,3 +151,4 @@ const styles = StyleSheet.create({
     fontFamily:"JosefinSans_500Medium",
   },
 });
+

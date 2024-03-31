@@ -14,18 +14,23 @@ import { Audio } from "expo-av";
 import { Camera, CameraType } from "expo-camera";
 import axios from "axios";
 import * as FileSystem from "expo-file-system";
-import LZString from "lz-string";
 
 import { useFonts } from "expo-font";
 import { JosefinSans_400Regular, JosefinSans_500Medium, JosefinSans_700Bold } from "@expo-google-fonts/josefin-sans";
 import AppLoading from "expo-app-loading";
 
-const Home = () => {
+
+const Home = ({ route }) => {
+  const user = route.params.userData;
+  // console.log("Data from home component: ", route.params.userData);
+
   const [speed, setSpeed] = useState(0);
   const [statusBarMessage, setStatusBarMessage] = useState("");
   // const cameraRef = useRef(null);
   const [camera, setCamera] = useState(null);
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
+  const [alertCount, setAlertCount] = useState(0);
+  const [sleepCount, setSleepCount] = useState(0);
 
   let [fontsLoaded] = useFonts({
     JosefinSans_400Regular,
@@ -101,14 +106,16 @@ const Home = () => {
           });
 
           axios
-            .post("http://192.168.0.110:5003/api/sendImage/detect", formData, {
+            .post("http://192.168.0.110:5003/api/sendImage/detect", formData, 
+            {
               headers: { "Content-Type": "multipart/form-data" },
             })
             .then((response) => {
               console.log("Server response:", response.data);
+              checkDrowsinessScore(response.data);
             })
             .catch((error) => {
-              console.error("Error while sending base64 data:", error.message);
+              console.error("Error while sending image data:", error.message);
             });
         } catch (err) {
           console.log("Error while capturign the photo: ", err.message);
@@ -117,6 +124,27 @@ const Home = () => {
         console.log("Camera ref is null");
       }
     }, 5000);
+  };
+
+  const checkDrowsinessScore = async (score) => {
+    console.log("Score fron method: ", score.score);
+    if (score.score >= 5) {
+      setAlertCount(alertCount + 1);
+      setStatusBarMessage("Don't sleep! You may risk yours and other lives.");
+
+      const playBackStatus = await sound.getStatusAsync();
+
+      if (!playBackStatus.isPlaying) {
+        await sound.playAsync();
+      }
+    } else {
+      setStatusBarMessage("");
+      const playBackStatus = await sound.getStatusAsync();
+      if (playBackStatus.isPlaying) {
+        await sound.unloadAsync();
+        await sound.loadAsync(require("../../assets/Audio/warning.mp3"));
+      }
+    }
   };
 
   // function to fetch current speed from location object
@@ -137,6 +165,7 @@ const Home = () => {
           const speedLimit = 1;
 
           if (currentSpeed >= speedLimit) {
+            setAlertCount(alertCount + 1);
             setStatusBarMessage(
               "Slow Down! You are exceeding the speed limit."
             );
@@ -209,21 +238,22 @@ const Home = () => {
         ) : null}
 
         <View className="w-full">
-          <View className="my-10 px-6 py-12">
-            <Text style={styles.title} className="font-thin text-4xl text-cyan-900 rounded-t-3xl ">
-              Hello,{'\n'}User
+
+          <View className="my-10 px-6 py-4">
+            <Text style={styles.title} className="font-thin text-4xl text-cyan-900 rounded-t-3xl">
+              Hello,{'\n'}{user.fullName}
             </Text>
-            <Text className="font-thin text-sm text-cyan-900 rounded-t-3xl font-serif">
-            {'\n'} Stay Alert, Stay Safe
+            <Text style={styles.title} className="font-thin text-sm text-cyan-900 rounded-t-3xl font-serif">
+            {'\n'} Stay Alert, Stay Safe !
             </Text>
           </View>
           <View className="flex flex-row w-full items-start text-start px-3 my-3 justify-evenly">
             <View className="w-2/5 h-32 rounded-xl shadow-xl shadow-black justify-center pl-5 bg-blue-300">
-              <Text className="text-6xl">7</Text>
+              <Text className="text-6xl">{alertCount}</Text>
               <Text className="text-lg">Alerts Raised</Text>
             </View>
             <View className="w-2/4 h-32 rounded-xl shadow-xl shadow-black justify-center pl-5 bg-blue-200">
-              <Text className="text-6xl">3</Text>
+              <Text className="text-6xl">{sleepCount}</Text>
               <Text className="text-lg">Sleep Count</Text>
             </View>
           </View>
@@ -245,7 +275,7 @@ const Home = () => {
           </View>
           <View className="flex flex-row w-full items-start text-start px-3 my-3 justify-evenly">
             <View className="w-2/5 h-32 rounded-xl shadow-xl shadow-black justify-center pl-5 bg-blue-300">
-              <Text className="text-6xl">3</Text>
+              <Text className="text-6xl"> - </Text>
               <Text className="text-lg">Call Blocks Count</Text>
             </View>
             
@@ -263,6 +293,7 @@ const Home = () => {
   );
 };
 
+
 const styles = StyleSheet.create({
   cameraContainer: {
     flex:2,
@@ -270,9 +301,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     position:'absolute',
     top:50,
-    left:90,
-    marginHorizontal:120
-    // right:20,
+    left:115,
+    marginHorizontal:130,
+    // right:120,
   },
   fixedRatio: {
     flex: 2,
@@ -281,9 +312,10 @@ const styles = StyleSheet.create({
   },
   title:{
     // fontSize:30,
-    fontFamily:"JosefinSans_700Bold"
+    fontFamily:"JosefinSans_500Medium"
   },
   
 });
+
 
 export default Home;

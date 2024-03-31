@@ -4,23 +4,26 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Octicons } from "@expo/vector-icons";
 
-const MyProfile = () => {
+const MyProfile = ({ route }) => {
+  const user = route.params.userData;
+  console.log("Data from home component: ", route.params.userData);
+
   return (
     <ScrollView>
       <View className="flex flex-col bg-blue-50 w-full h-full">
-        <View className="flex flex-row mx-5 my-5 px-2 py-2 border border-cyan-900 bg-blue-200 rounded-xl shadow-2xl shadow-black">
+        <View className="flex flex-row mx-5 my-5 px-2 py-2 border border-cyan-900 bg-blue-200 rounded-xl shadow-2xl shadow-black ">
           <View className="items-start">
             <Image
-              className="h-36 w-36 rounded-full"
-              source={require("../../assets/Selfphoto.jpg")}
+              className="h-36 w-36 ml-3 rounded-full my-4"
+              source={require("../../assets/myprofile-icon.jpg")}
             />
           </View>
-          <View className="py-2 px-2 justify-center items-start">
+          <View className="py-2 px-2 mx-5 justify-center items-start">
             <Text className="text-3xl text-emerald-900 font-bold">
-              Rushiraj
+              {user.fullName}
             </Text>
-            <Text className="text-3xl text-emerald-900 font-bold">
-              Kudapane
+            <Text className="text-sm text-emerald-900 font-bold">
+              {user.username}
             </Text>
             <Text className="text-lg text-gray-700">Resposible Driver</Text>
           </View>
@@ -40,7 +43,7 @@ const MyProfile = () => {
                 color="rgba(0,40,53,0.95)"
               />
               <Text className="text-center mt-1 text-xl text-cyan-900">
-                100 km/hr
+                40 km/hr
               </Text>
               <Text className="text-center mt-1 text-gray-700">
                 Overall Avg. Speed

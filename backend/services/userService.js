@@ -1,8 +1,8 @@
 const userRepository = require("../repositories/userRepository");
 
-const getUserService = () => {
+const getUserService = async (reqBody) => {
   try {
-    const response = userRepository.getUser();
+    const response = await userRepository.getUser(reqBody);
     return response;
   } catch (err) {
     console.log(err);
@@ -11,9 +11,16 @@ const getUserService = () => {
 };
 
 const registerUserService = (reqBody) => {
-  const { name, photo, email, mobile, gender, age } = reqBody;
+  const { fullName, gender, email, phoneNumber, username, password } = reqBody;
   try {
-    userRepository.registerUser(name, photo, email, mobile, gender, age);
+    userRepository.registerUser(
+      fullName,
+      gender,
+      email,
+      phoneNumber,
+      username,
+      password
+    );
     return true;
   } catch (err) {
     console.log(err);
